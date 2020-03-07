@@ -1,0 +1,102 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "smalloc.h"
+#include "slice_void.h"
+
+struct slice *init_slice(size_t len, size_t item_width) {
+    struct slice *aslice = smalloc(sizeof(struct slice));
+    aslice->len = len;
+    aslice->start = 0;
+    aslice->end = 0;
+    aslice->item_width = item_width;
+    aslice->array = smalloc(len * sizeof(char) * item_width);
+    return(aslice);
+}
+
+void free_slice(struct slice *aslice) {
+    free(aslice->array);
+    free(aslice);
+}
+
+void double_slice(struct slice *aslice) {
+    aslice->len *= 2;
+    aslice->array = srealloc(aslice->array, aslice->len * sizeof(char) * aslice->item_width);
+}
+
+void slice_append(struct slice *aslice, const void *item) {
+    if (aslice->end >= aslice->len) {
+        double_slice(aslice);
+    }
+    memcpy(aslice->array + (aslice->end * aslice->item_width), item, aslice->item_width);
+    aslice->end++;
+}
+
+void print_slice(struct slice *aslice, void (*fp) (void *)) {
+    for (size_t i=aslice->start; i<aslice->end; i++) {
+        fp(aslice->array + (i * aslice->item_width));
+    }
+    printf("\n");
+}
+
+void print_double(void *d) {
+    double d2;
+    memcpy(&d2, d, sizeof(double));
+    printf("%10lg", d2);
+}
+
+void print_char(void *d) {
+    char d2;
+    memcpy(&d2, d, sizeof(char));
+    printf("%c", d2);
+}
+
+void print_long_long(void *d) {
+    long long d2;
+    memcpy(&d2, d, sizeof(long long));
+    printf("%10lld", d2);
+}
+
+int main() {
+    struct slice *aslice = init_slice(3, sizeof(char));
+    char *string = "hello";
+    char format[10] = "%c";
+    slice_append(aslice, &string[0]);
+    slice_append(aslice, &string[1]);
+    slice_append(aslice, &string[2]);
+    slice_append(aslice, &string[3]);
+    slice_append(aslice, &string[4]);
+    print_slice(aslice, &print_char);
+    free_slice(aslice);
+    
+    strcpy(format, "%10lld");
+    aslice = init_slice(5, sizeof(long long));
+    long long dat = 5;
+    slice_append(aslice, &dat);
+    dat++;
+    slice_append(aslice, &dat);
+    dat++;
+    slice_append(aslice, &dat);
+    dat++;
+    slice_append(aslice, &dat);
+    dat++;
+    slice_append(aslice, &dat);
+    print_slice(aslice, &print_long_long);
+    free_slice(aslice);
+    
+    strcpy(format, "%10lg");
+    aslice = init_slice(5, sizeof(double));
+    double dat2 = 11.1;
+    slice_append(aslice, &dat2);
+    dat2++;
+    slice_append(aslice, &dat2);
+    dat2++;
+    slice_append(aslice, &dat2);
+    dat2++;
+    slice_append(aslice, &dat2);
+    dat2++;
+    slice_append(aslice, &dat2);
+    print_slice(aslice, &print_double);
+    printf("%lg\n", ((float *) aslice->array)[0]);
+    free_slice(aslice);
+}
