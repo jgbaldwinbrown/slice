@@ -25,11 +25,15 @@ void double_slice(struct slice *aslice) {
 }
 
 void slice_append(struct slice *aslice, const void *item) {
+    slice_extend(aslice, item, 1);
+}
+
+void slice_extend(struct slice *aslice, const void *item, size_t nmemb) {
     if (aslice->end >= aslice->len) {
         double_slice(aslice);
     }
-    memcpy(aslice->array + (aslice->end * aslice->item_width), item, aslice->item_width);
-    aslice->end++;
+    memcpy(aslice->array + (aslice->end * aslice->item_width), item, aslice->item_width * nmemb);
+    aslice->end += nmemb;
 }
 
 void print_slice(struct slice *aslice, void (*fp) (void *)) {
@@ -98,5 +102,11 @@ int main() {
     slice_append(aslice, &dat2);
     print_slice(aslice, &print_double);
     printf("%lg\n", ((float *) aslice->array)[0]);
+    free_slice(aslice);
+    
+    aslice = init_slice(5, sizeof(double));
+    double dat3[] = {11.27, 58.36, -13.0};
+    slice_extend(aslice, dat3, 3);
+    print_slice(aslice, &print_double);
     free_slice(aslice);
 }
