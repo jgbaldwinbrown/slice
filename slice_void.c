@@ -70,12 +70,12 @@ struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
     return(child);
 }
 
-void slice_extract(void *dest, struct slice *source, size_t nmemb) {
-    memcpy(dest, source->array, nmemb * source->item_width);
+void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb) {
+    memcpy(dest, source->array + (pos * source->item_width), nmemb * source->item_width);
 }
 
-void slice_pop1(void *dest, struct slice *source) {
-    slice_extract(dest, source, 1);
+void slice_pop1(void *dest, struct slice *source, size_t pos) {
+    slice_extract(dest, source, pos, 1);
 }
 
 int main() {
@@ -125,5 +125,10 @@ int main() {
     double dat3[] = {11.27, 58.36, -13.0};
     slice_extend(aslice, dat3, 3);
     print_slice(aslice, &print_double);
+    double temp_double;
+    slice_pop1(&temp_double, aslice, 2);
+    double double_array[2];
+    slice_extract(&double_array, aslice, 1, 2);
+    printf("%lg\t%lg\n", double_array[0], double_array[1]);
     free_slice(aslice);
 }
