@@ -1,4 +1,4 @@
-all: slice slice_void
+all: slice test
 
 CC := gcc
 CFLAGS := -Wpedantic -Wall -Werror -Wextra -O3
@@ -15,5 +15,8 @@ slice: slice.o smalloc.o
 slice_void.o: slice_void.c slice_void.h
 	$(CC) $(CFLAGS) -c $<
 
-slice_void: slice_void.o smalloc.o
+test.o: test.c slice_void.h
+	$(CC) $(CFLAGS) -c $<
+
+test: test.o slice_void.o smalloc.o
 	$(CC) $(CFLAGS) $^ -o $@
