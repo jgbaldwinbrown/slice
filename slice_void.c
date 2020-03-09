@@ -11,6 +11,7 @@ struct slice *init_slice(size_t len, size_t item_width) {
     aslice->end = 0;
     aslice->item_width = item_width;
     aslice->array = smalloc(len * sizeof(char) * item_width);
+    aslice->parent = NULL;
     return(aslice);
 }
 
@@ -122,7 +123,7 @@ int main() {
     free_slice(aslice);
     
     aslice = init_slice(5, sizeof(double));
-    double dat3[] = {11.27, 58.36, -13.0};
+    double dat3[] = {11.27, 58.36, -13.0, 25.8, 33.1};
     slice_extend(aslice, dat3, 3);
     print_slice(aslice, &print_double);
     double temp_double;
@@ -130,5 +131,8 @@ int main() {
     double double_array[2];
     slice_extract(&double_array, aslice, 1, 2);
     printf("%lg\t%lg\n", double_array[0], double_array[1]);
+    
+    struct slice sub = sub_slice(aslice, 1, 3);
+    print_slice(&sub, print_double);
     free_slice(aslice);
 }
