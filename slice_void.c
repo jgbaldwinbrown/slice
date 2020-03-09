@@ -45,20 +45,36 @@ void print_slice(struct slice *aslice, void (*fp) (void *)) {
 
 void print_double(void *d) {
     double d2;
-    memcpy(&d2, d, sizeof(double));
+    slice_pop1(&d2, d);
     printf("%10lg", d2);
 }
 
 void print_char(void *d) {
     char d2;
-    memcpy(&d2, d, sizeof(char));
+    slice_pop1(&d2, d);
     printf("%c", d2);
 }
 
 void print_long_long(void *d) {
     long long d2;
-    memcpy(&d2, d, sizeof(long long));
+    slice_pop1(&d2, d);
     printf("%10lld", d2);
+}
+
+struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
+    struct slice child = *parent;
+    child.parent = parent;
+    child.start = start;
+    child.end = end;
+    return(child);
+}
+
+void slice_extract(void *dest, struct slice *source, size_t nmemb) {
+    memcpy(dest, source->array, nmemb * source->item_width);
+}
+
+void slice_pop1(void *dest, struct slice *source) {
+    slice_extract(dest, source, 1);
 }
 
 int main() {
