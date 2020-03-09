@@ -20,9 +20,9 @@ void free_slice(struct slice *aslice) {
     free(aslice);
 }
 
-void double_slice(struct slice *aslice) {
+void double_slice(struct slice *aslice, size_t length_needed) {
     aslice->len *= 2;
-    aslice->array = srealloc(aslice->array, aslice->len * sizeof(char) * aslice->item_width);
+    aslice->array = srealloc(aslice->array, length_needed * sizeof(char) * aslice->item_width);
 }
 
 void slice_append(struct slice *aslice, const void *item) {
@@ -31,7 +31,7 @@ void slice_append(struct slice *aslice, const void *item) {
 
 void slice_extend(struct slice *aslice, const void *item, size_t nmemb) {
     if (aslice->end >= aslice->len) {
-        double_slice(aslice);
+        double_slice(aslice, aslice->len + nmemb);
     }
     memcpy(aslice->array + (aslice->end * aslice->item_width), item, aslice->item_width * nmemb);
     aslice->end += nmemb;
@@ -82,7 +82,6 @@ void slice_pop1(void *dest, struct slice *source, size_t pos) {
 int main() {
     struct slice *aslice = init_slice(3, sizeof(char));
     char *string = "hello";
-    char format[10] = "%c";
     slice_append(aslice, &string[0]);
     slice_append(aslice, &string[1]);
     slice_append(aslice, &string[2]);
@@ -91,7 +90,6 @@ int main() {
     print_slice(aslice, &print_char);
     free_slice(aslice);
     
-    strcpy(format, "%10lld");
     aslice = init_slice(5, sizeof(long long));
     long long dat = 5;
     slice_append(aslice, &dat);
@@ -106,7 +104,6 @@ int main() {
     print_slice(aslice, &print_long_long);
     free_slice(aslice);
     
-    strcpy(format, "%10lg");
     aslice = init_slice(5, sizeof(double));
     double dat2 = 11.1;
     slice_append(aslice, &dat2);
