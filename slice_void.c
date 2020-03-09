@@ -74,7 +74,7 @@ void print_long_long(void *d) {
 }
 
 
-struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
+struct slice sub_slice_abs(struct slice *parent, size_t start, size_t end) {
     struct slice child = *parent;
     child.parent = parent;
     child.start = start;
@@ -82,8 +82,24 @@ struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
     return(child);
 }
 
-void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb) {
+struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
+    struct slice child = *parent;
+    child.parent = parent;
+    child.start = start + parent->start;
+    child.end = end + parent->end;
+    return(child);
+}
+
+void slice_extract_abs(void *dest, struct slice *source, size_t pos, size_t nmemb) {
     memcpy(dest, source->array + (pos * source->item_width), nmemb * source->item_width);
+}
+
+void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb) {
+    memcpy(dest, source->array + ((start + pos) * source->item_width), nmemb * source->item_width);
+}
+
+void slice_pop1_abs(void *dest, struct slice *source, size_t pos) {
+    slice_extract_abs(dest, source, pos, 1);
 }
 
 void slice_pop1(void *dest, struct slice *source, size_t pos) {
