@@ -95,7 +95,7 @@ void slice_extract_abs(void *dest, struct slice *source, size_t pos, size_t nmem
 }
 
 void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb) {
-    memcpy(dest, source->array + ((start + pos) * source->item_width), nmemb * source->item_width);
+    memcpy(dest, source->array + ((source->start + pos) * source->item_width), nmemb * source->item_width);
 }
 
 void slice_pop1_abs(void *dest, struct slice *source, size_t pos) {
