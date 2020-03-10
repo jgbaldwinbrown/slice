@@ -1,7 +1,3 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "smalloc.h"
 #include "slice_void.h"
 
 int main() {
@@ -62,5 +58,7 @@ int main() {
     
     struct slice sub = sub_slice(aslice, 1, 3);
     print_slice(&sub, print_double);
+    introspect_slice(&sub, print_double);
+    introspect_slice(aslice, print_double);
     free_slice(aslice);
 }

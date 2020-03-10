@@ -1,3 +1,8 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "smalloc.h"
+
 struct slice {
     size_t len;
     size_t item_width;

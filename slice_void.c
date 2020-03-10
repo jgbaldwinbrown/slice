@@ -86,7 +86,7 @@ struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
     struct slice child = *parent;
     child.parent = parent;
     child.start = start + parent->start;
-    child.end = end + parent->end;
+    child.end = end + parent->start;
     return(child);
 }
 
