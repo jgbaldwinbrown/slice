@@ -60,5 +60,8 @@ int main() {
     print_slice(&sub, print_double);
     introspect_slice(&sub, print_double);
     introspect_slice(aslice, print_double);
+    
+    struct slice *duped = dup_slice(aslice);
+    print_slice(duped, print_double);
     free_slice(aslice);
 }

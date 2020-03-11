@@ -16,9 +16,9 @@ struct slice *init_slice(size_t len, size_t item_width) {
 }
 
 struct slice * dup_slice(struct slice *inslice) {
-    outslice = smalloc(sizeof(struct slice));
+    struct slice *outslice = smalloc(sizeof(struct slice));
     *outslice = *inslice;
-    outslice->array = smalloc(len * sizeof(char) * item_width);
+    outslice->array = smalloc(outslice->len * sizeof(char) * outslice->item_width);
     memcpy(outslice->array, inslice->array, outslice->len * outslice->item_width);
     return(outslice);
 }
