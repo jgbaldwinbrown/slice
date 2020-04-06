@@ -46,14 +46,14 @@ void slice_extend(struct slice *aslice, const void *item, size_t nmemb) {
     aslice->end += nmemb;
 }
 
-void print_slice(struct slice *aslice, void (*fp) (void *)) {
+void print_slice(const struct slice *aslice, void (*fp) (void *)) {
     for (size_t i=aslice->start; i<aslice->end; i++) {
         fp(aslice->array + (i * aslice->item_width));
     }
     printf("\n");
 }
 
-void introspect_slice(struct slice *aslice, void (*fp) (void *)) {
+void introspect_slice(const struct slice *aslice, void (*fp) (void *)) {
     printf("len: %ld\nstart: %ld\tend: %ld\nitem_width: %ld\nparent: %p\n",
         aslice->len,
         aslice->start,

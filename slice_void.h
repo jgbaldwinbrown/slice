@@ -22,8 +22,8 @@ void double_slice(struct slice *aslice, size_t length_needed);
 void slice_append(struct slice *aslice, const void *item);
 void slice_extend(struct slice *aslice, const void *item, size_t nmemb);
 
-void print_slice(struct slice *aslice, void (*fp) (void *));
-void introspect_slice(struct slice *aslice, void (*fp) (void *));
+void print_slice(const struct slice *aslice, void (*fp) (void *));
+void introspect_slice(const struct slice *aslice, void (*fp) (void *));
 void print_double(void *d);
 void print_char(void *d);
 void print_long_long(void *d);
