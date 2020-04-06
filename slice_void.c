@@ -98,6 +98,17 @@ struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
     return(child);
 }
 
+struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_width, size_t nmemb) {
+    struct slice child;
+    child.len = nmemb;
+    child.item_width = item_width;
+    child.array = (char *) array;
+    child.start = start;
+    child.end = end;
+    child.parent = (struct slice *) array;
+    return(child);
+}
+
 void slice_extract_abs(void *dest, struct slice *source, size_t pos, size_t nmemb) {
     memcpy(dest, source->array + (pos * source->item_width), nmemb * source->item_width);
 }

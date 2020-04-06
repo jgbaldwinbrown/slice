@@ -27,6 +27,7 @@ void print_char(void *d);
 void print_long_long(void *d);
 
 struct slice sub_slice(struct slice *parent, size_t start, size_t end);
+struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_width, size_t nmemb);
 void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb);
 void slice_pop1(void *dest, struct slice *source, size_t pos);
 

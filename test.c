@@ -64,4 +64,10 @@ int main() {
     struct slice *duped = dup_slice(aslice);
     print_slice(duped, print_double);
     free_slice(aslice);
+    
+    double *dptr = &dat3[0];
+    struct slice arrslice = sub_slice_array(dptr, 1, 3, sizeof(double), 5);
+    print_slice(&arrslice, print_double);
+    
+    return(0);
 }
