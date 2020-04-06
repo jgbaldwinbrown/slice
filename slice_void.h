@@ -14,8 +14,8 @@ struct slice {
     bool owner;
 };
 
-struct slice *init_slice(size_t len, size_t item_width);
-void free_slice(struct slice *aslice);
+struct slice init_slice(size_t len, size_t item_width);
+void free_slice(struct slice aslice);
 struct slice * dup_slice(struct slice *inslice);
 
 void double_slice(struct slice *aslice, size_t length_needed);

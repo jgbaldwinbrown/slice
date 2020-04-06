@@ -5,15 +5,15 @@
 #include <stdbool.h>
 #include "slice_void.h"
 
-struct slice *init_slice(size_t len, size_t item_width) {
-    struct slice *aslice = smalloc(sizeof(struct slice));
-    aslice->len = len;
-    aslice->start = 0;
-    aslice->end = 0;
-    aslice->item_width = item_width;
-    aslice->array = smalloc(len * sizeof(char) * item_width);
-    aslice->parent = NULL;
-    aslice->owner = true;
+struct slice init_slice(size_t len, size_t item_width) {
+    struct slice aslice;
+    aslice.len = len;
+    aslice.start = 0;
+    aslice.end = 0;
+    aslice.item_width = item_width;
+    aslice.array = smalloc(len * sizeof(char) * item_width);
+    aslice.parent = NULL;
+    aslice.owner = true;
     return(aslice);
 }
 
@@ -25,9 +25,8 @@ struct slice * dup_slice(struct slice *inslice) {
     return(outslice);
 }
 
-void free_slice(struct slice *aslice) {
-    free(aslice->array);
-    free(aslice);
+void free_slice(struct slice aslice) {
+    free(aslice.array);
 }
 
 void double_slice(struct slice *aslice, size_t length_needed) {
