@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "smalloc.h"
+#include <stdbool.h>
 
 struct slice {
     size_t len;
@@ -10,6 +11,7 @@ struct slice {
     size_t start;
     size_t end;
     struct slice *parent;
+    bool owner;
 };
 
 struct slice *init_slice(size_t len, size_t item_width);

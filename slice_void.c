@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "smalloc.h"
+#include <stdbool.h>
 #include "slice_void.h"
 
 struct slice *init_slice(size_t len, size_t item_width) {
@@ -12,6 +13,7 @@ struct slice *init_slice(size_t len, size_t item_width) {
     aslice->item_width = item_width;
     aslice->array = smalloc(len * sizeof(char) * item_width);
     aslice->parent = NULL;
+    aslice->owner = true;
     return(aslice);
 }
 
@@ -87,6 +89,7 @@ struct slice sub_slice_abs(struct slice *parent, size_t start, size_t end) {
     child.parent = parent;
     child.start = start;
     child.end = end;
+    child.owner = false;
     return(child);
 }
 
@@ -95,6 +98,7 @@ struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
     child.parent = parent;
     child.start = start + parent->start;
     child.end = end + parent->start;
+    child.owner = false;
     return(child);
 }
 
@@ -106,6 +110,7 @@ struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_
     child.start = start;
     child.end = end;
     child.parent = (struct slice *) array;
+    child.owner = false;
     return(child);
 }
 
