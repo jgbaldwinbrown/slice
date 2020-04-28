@@ -8,6 +8,6 @@ int main() {
         darray[i] = i;
     }
     struct slice dslice = sub_slice_array(darray, 3, 7, sizeof(double), ARSIZ);
-    print_slice(&dslice, print_double);
+    print_slice(dslice, print_double);
     return(0);
 }
