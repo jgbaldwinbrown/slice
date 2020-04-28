@@ -63,14 +63,14 @@ Extract a single element with the `slice_pop1` function:
 
 ```c
 double a;
-slice_pop1(&a, my_slice, 2)
+slice_pop1(a, my_slice, 2)
 ```
 
 Extract multiple contiguous elements to an array with  the `slice_extract` function:
 
 ```c
 double a;
-slice_extract(&b, my_slice, 1, 2)
+slice_extract(b, my_slice, 1, 2)
 ```
 
 ### Sub-slices
@@ -118,16 +118,16 @@ To make an array of `double`s, the following code is acceptable:
 
 int main() {
     double d[] = {1.5, 3.7, 3.8, 9.9, 10.10};
-    struct slice *my_slice = init_slice(3, sizeof(double));
+    struct slice my_slice = init_slice(3, sizeof(double));
     double d2[10];
     
-    slice_extend(my_slice, &d[0], 5);
+    slice_extend(&my_slice, &d[0], 5);
     struct slice my_subslice = sub_slice(my_slice, 1, 4);
     
     print_slice(my_slice, print_double);
-    print_slice(&my_subslice, print_double);
+    print_slice(my_subslice, print_double);
     
-    slice_extract(&d2[0], &my_subslice, 1, 1);
+    slice_extract(&d2[0], my_subslice, 1, 1);
     printf("%lg\n", d2[0]);
     
     free_slice(my_slice);
