@@ -17,11 +17,11 @@ struct slice init_slice(size_t len, size_t item_width) {
     return(aslice);
 }
 
-struct slice * dup_slice(struct slice *inslice) {
+struct slice * dup_slice(struct slice inslice) {
     struct slice *outslice = smalloc(sizeof(struct slice));
-    *outslice = *inslice;
+    *outslice = inslice;
     outslice->array = smalloc(outslice->len * sizeof(char) * outslice->item_width);
-    memcpy(outslice->array, inslice->array, outslice->len * outslice->item_width);
+    memcpy(outslice->array, inslice.array, outslice->len * outslice->item_width);
     return(outslice);
 }
 
@@ -46,20 +46,20 @@ void slice_extend(struct slice *aslice, const void *item, size_t nmemb) {
     aslice->end += nmemb;
 }
 
-void print_slice(const struct slice *aslice, void (*fp) (void *)) {
-    for (size_t i=aslice->start; i<aslice->end; i++) {
-        fp(aslice->array + (i * aslice->item_width));
+void print_slice(const struct slice aslice, void (*fp) (void *)) {
+    for (size_t i=aslice.start; i<aslice.end; i++) {
+        fp(aslice.array + (i * aslice.item_width));
     }
     printf("\n");
 }
 
-void introspect_slice(const struct slice *aslice, void (*fp) (void *)) {
+void introspect_slice(const struct slice aslice, void (*fp) (void *)) {
     printf("len: %ld\nstart: %ld\tend: %ld\nitem_width: %ld\nparent: %p\n",
-        aslice->len,
-        aslice->start,
-        aslice->end,
-        aslice->item_width,
-        (void *) aslice->parent
+        aslice.len,
+        aslice.start,
+        aslice.end,
+        aslice.item_width,
+        (void *) aslice.parent
     );
     print_slice(aslice, fp);
 }
@@ -83,20 +83,20 @@ void print_long_long(void *d) {
 }
 
 
-struct slice sub_slice_abs(struct slice *parent, size_t start, size_t end) {
-    struct slice child = *parent;
-    child.parent = parent;
+struct slice sub_slice_abs(struct slice parent, size_t start, size_t end) {
+    struct slice child = parent;
+    child.parent = &parent;
     child.start = start;
     child.end = end;
     child.owner = false;
     return(child);
 }
 
-struct slice sub_slice(struct slice *parent, size_t start, size_t end) {
-    struct slice child = *parent;
-    child.parent = parent;
-    child.start = start + parent->start;
-    child.end = end + parent->start;
+struct slice sub_slice(struct slice parent, size_t start, size_t end) {
+    struct slice child = parent;
+    child.parent = &parent;
+    child.start = start + parent.start;
+    child.end = end + parent.start;
     child.owner = false;
     return(child);
 }
@@ -113,19 +113,19 @@ struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_
     return(child);
 }
 
-void slice_extract_abs(void *dest, struct slice *source, size_t pos, size_t nmemb) {
-    memcpy(dest, source->array + (pos * source->item_width), nmemb * source->item_width);
+void slice_extract_abs(void *dest, struct slice source, size_t pos, size_t nmemb) {
+    memcpy(dest, source.array + (pos * source.item_width), nmemb * source.item_width);
 }
 
-void slice_extract(void *dest, struct slice *source, size_t pos, size_t nmemb) {
-    memcpy(dest, source->array + ((source->start + pos) * source->item_width), nmemb * source->item_width);
+void slice_extract(void *dest, struct slice source, size_t pos, size_t nmemb) {
+    memcpy(dest, source.array + ((source.start + pos) * source.item_width), nmemb * source.item_width);
 }
 
-void slice_pop1_abs(void *dest, struct slice *source, size_t pos) {
+void slice_pop1_abs(void *dest, struct slice source, size_t pos) {
     slice_extract_abs(dest, source, pos, 1);
 }
 
-void slice_pop1(void *dest, struct slice *source, size_t pos) {
+void slice_pop1(void *dest, struct slice source, size_t pos) {
     slice_extract(dest, source, pos, 1);
 }
 
