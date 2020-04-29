@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "smalloc.h"
 #include <stdbool.h>
-#include "slice_void.h"
+#include "slice.h"
 
 struct slice init_slice(size_t len, size_t item_width) {
     struct slice aslice;

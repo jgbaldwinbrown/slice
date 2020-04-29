@@ -114,7 +114,7 @@ introspect_slice(myslice, print_double);
 To make an array of `double`s, the following code is acceptable:
 
 ```c
-#include "slice_void.h"
+#include "slice.h"
 
 int main() {
     double d[] = {1.5, 3.7, 3.8, 9.9, 10.10};

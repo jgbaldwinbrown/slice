@@ -1,4 +1,4 @@
-#include "slice_void.h"
+#include "slice.h"
 
 #define ARSIZ 10
 

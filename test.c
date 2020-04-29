@@ -1,4 +1,4 @@
-#include "slice_void.h"
+#include "slice.h"
 
 int main() {
     struct slice aslice = init_slice(3, sizeof(char));
