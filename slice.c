@@ -1,154 +1,131 @@
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "smalloc.h"
-#include "slice.h"
+#include <stdbool.h>
+#include "slice_void.h"
 
-struct slice *init_slice(enum type type, size_t len) {
-    struct slice *aslice = smalloc(sizeof(struct slice));
-    aslice->type = type;
-    aslice->len = len;
-    aslice->start = 0;
-    aslice->end = 0;
-    switch (type) {
-        case CHAR:
-            aslice->array.c = smalloc(len * sizeof(char));
-            break;
-        case LLINT:
-            aslice->array.l = smalloc(len * sizeof(long long));
-            break;
-        case DOUBLE:
-            aslice->array.d = smalloc(len * sizeof(double));
-            break;
-        default:
-            exit(1);
-    }
+struct slice init_slice(size_t len, size_t item_width) {
+    struct slice aslice;
+    aslice.len = len;
+    aslice.start = 0;
+    aslice.end = 0;
+    aslice.item_width = item_width;
+    aslice.array = smalloc(len * sizeof(char) * item_width);
+    aslice.parent = NULL;
+    aslice.owner = true;
     return(aslice);
 }
 
-void free_slice(struct slice *aslice) {
-    switch (aslice->type) {
-        case CHAR:
-            free(aslice->array.c);
-            break;
-        case LLINT:
-            free(aslice->array.l);
-            break;
-        case DOUBLE:
-            free(aslice->array.d);
-            break;
-        default:
-            exit(1);
-    }
-    free(aslice);
+struct slice * dup_slice(struct slice inslice) {
+    struct slice *outslice = smalloc(sizeof(struct slice));
+    *outslice = inslice;
+    outslice->array = smalloc(outslice->len * sizeof(char) * outslice->item_width);
+    memcpy(outslice->array, inslice.array, outslice->len * outslice->item_width);
+    return(outslice);
 }
 
-void double_slice(struct slice *aslice) {
-    aslice->len *= 2;
-    switch (aslice->type) {
-        case CHAR:
-            aslice->array.c = srealloc(aslice->array.c, aslice->len * sizeof(char));
-            break;
-        case LLINT:
-            aslice->array.l = srealloc(aslice->array.l, aslice->len * sizeof(long long));
-            break;
-        case DOUBLE:
-            aslice->array.d = srealloc(aslice->array.d, aslice->len * sizeof(double));
-            break;
-        default:
-            exit(1);
-    }
+void free_slice(struct slice aslice) {
+    free(aslice.array);
+}
+
+void double_slice(struct slice *aslice, size_t length_needed) {
+    aslice->len = length_needed * 2;
+    aslice->array = srealloc(aslice->array, length_needed * sizeof(char) * aslice->item_width);
 }
 
 void slice_append(struct slice *aslice, const void *item) {
-    if (aslice->end >= aslice->len) {
-        double_slice(aslice);
-    }
-    switch (aslice->type) {
-        case CHAR:
-            aslice->array.c[aslice->end] = *(char *) item;
-            aslice->end++;
-            break;
-        case LLINT:
-            aslice->array.l[aslice->end] = *(long long *) item;
-            aslice->end++;
-            break;
-        case DOUBLE:
-            aslice->array.d[aslice->end] = *(double *) item;
-            aslice->end++;
-            break;
-        default:
-            exit(1);
-    }
+    slice_extend(aslice, item, 1);
 }
 
-void print_slice(struct slice *aslice) {
-    static char c_format[] = "%c";
-    static char l_format[] = "%10lld";
-    static char d_format[] = "%10lg";
-    char *format;
-    switch (aslice->type) {
-        case CHAR:
-            format = &c_format[0];
-            for (size_t i=aslice->start; i<aslice->end; i++) {
-                printf(format, aslice->array.c[i]);
-            }
-            break;
-        case LLINT:
-            format = &l_format[0];
-            for (size_t i=aslice->start; i<aslice->end; i++) {
-                printf(format, aslice->array.l[i]);
-            }
-            aslice->end++;
-            break;
-        case DOUBLE:
-            format = &d_format[0];
-            for (size_t i=aslice->start; i<aslice->end; i++) {
-                printf(format, aslice->array.d[i]);
-            }
-            aslice->end++;
-            break;
-        default:
-            exit(1);
+void slice_extend(struct slice *aslice, const void *item, size_t nmemb) {
+    if (aslice->end + nmemb + 1 >= aslice->len) {
+        double_slice(aslice, aslice->len + nmemb);
+    }
+    memcpy(aslice->array + (aslice->end * aslice->item_width), item, aslice->item_width * nmemb);
+    aslice->end += nmemb;
+}
+
+void print_slice(const struct slice aslice, void (*fp) (void *)) {
+    for (size_t i=aslice.start; i<aslice.end; i++) {
+        fp(aslice.array + (i * aslice.item_width));
     }
     printf("\n");
 }
 
-int main() {
-    struct slice *aslice = init_slice(CHAR, 3);
-    char *string = "hello";
-    slice_append(aslice, &string[0]);
-    slice_append(aslice, &string[1]);
-    slice_append(aslice, &string[2]);
-    slice_append(aslice, &string[3]);
-    slice_append(aslice, &string[4]);
-    print_slice(aslice);
-    free_slice(aslice);
-    
-    aslice = init_slice(LLINT, 5);
-    long long dat = 5;
-    slice_append(aslice, &dat);
-    dat++;
-    slice_append(aslice, &dat);
-    dat++;
-    slice_append(aslice, &dat);
-    dat++;
-    slice_append(aslice, &dat);
-    dat++;
-    slice_append(aslice, &dat);
-    print_slice(aslice);
-    free_slice(aslice);
-    
-    aslice = init_slice(DOUBLE, 5);
-    double dat2 = 11.1;
-    slice_append(aslice, &dat2);
-    dat2++;
-    slice_append(aslice, &dat2);
-    dat2++;
-    slice_append(aslice, &dat2);
-    dat2++;
-    slice_append(aslice, &dat2);
-    dat2++;
-    slice_append(aslice, &dat2);
-    print_slice(aslice);
-    free_slice(aslice);
+void introspect_slice(const struct slice aslice, void (*fp) (void *)) {
+    printf("len: %ld\nstart: %ld\tend: %ld\nitem_width: %ld\nparent: %p\n",
+        aslice.len,
+        aslice.start,
+        aslice.end,
+        aslice.item_width,
+        (void *) aslice.parent
+    );
+    print_slice(aslice, fp);
 }
+
+void print_double(void *d) {
+    double d2;
+    memcpy(&d2, d, sizeof(double));
+    printf("%10lg", d2);
+}
+
+void print_char(void *d) {
+    char d2;
+    memcpy(&d2, d, sizeof(char));
+    printf("%c", d2);
+}
+
+void print_long_long(void *d) {
+    long long d2;
+    memcpy(&d2, d, sizeof(long long));
+    printf("%10lld", d2);
+}
+
+
+struct slice sub_slice_abs(struct slice parent, size_t start, size_t end) {
+    struct slice child = parent;
+    child.parent = &parent;
+    child.start = start;
+    child.end = end;
+    child.owner = false;
+    return(child);
+}
+
+struct slice sub_slice(struct slice parent, size_t start, size_t end) {
+    struct slice child = parent;
+    child.parent = &parent;
+    child.start = start + parent.start;
+    child.end = end + parent.start;
+    child.owner = false;
+    return(child);
+}
+
+struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_width, size_t nmemb) {
+    struct slice child;
+    child.len = nmemb;
+    child.item_width = item_width;
+    child.array = (char *) array;
+    child.start = start;
+    child.end = end;
+    child.parent = (struct slice *) array;
+    child.owner = false;
+    return(child);
+}
+
+void slice_extract_abs(void *dest, struct slice source, size_t pos, size_t nmemb) {
+    memcpy(dest, source.array + (pos * source.item_width), nmemb * source.item_width);
+}
+
+void slice_extract(void *dest, struct slice source, size_t pos, size_t nmemb) {
+    memcpy(dest, source.array + ((source.start + pos) * source.item_width), nmemb * source.item_width);
+}
+
+void slice_pop1_abs(void *dest, struct slice source, size_t pos) {
+    slice_extract_abs(dest, source, pos, 1);
+}
+
+void slice_pop1(void *dest, struct slice source, size_t pos) {
+    slice_extract(dest, source, pos, 1);
+}
+
