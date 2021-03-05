@@ -4,35 +4,32 @@
 #include "smalloc.h"
 #include <stdbool.h>
 
-struct slice {
-    size_t len;
+typedef struct dynarray {
+    size_t cap;
     size_t item_width;
-    char *array;
+    char * array;
+} dynarray;
+
+typedef struct slice {
     size_t start;
-    size_t end;
-    struct slice *parent;
-    bool owner;
-};
+    size_t len;
+    dynarray *parent;
+} slice;
 
-struct slice init_slice(size_t len, size_t item_width);
-void free_slice(struct slice aslice);
-struct slice * dup_slice(struct slice inslice);
+slice init_slice(size_t cap, size_t item_width);
+void free_slice(sslice slice aslice);
+slice dup_slice(slice inslice);
 
-void double_slice(struct slice *aslice, size_t length_needed);
-void slice_append(struct slice *aslice, const void *item);
-void slice_extend(struct slice *aslice, const void *item, size_t nmemb);
+void grow_dynarray(dynarray darray, size_t length_needed);
+void slice_append(slice *aslice, const void *item);
+void slice_extend(slice *aslice, const void *item, size_t nmemb);
 
-void print_slice(const struct slice aslice, void (*fp) (void *));
-void introspect_slice(const struct slice aslice, void (*fp) (void *));
+void print_slice(slice aslice, void (*fp) (void *));
+void introspect_slice(slice aslice, void (*fp) (void *));
 void print_double(void *d);
 void print_char(void *d);
 void print_long_long(void *d);
 
-struct slice sub_slice(struct slice parent, size_t start, size_t end);
-struct slice sub_slice_array(void *array, size_t start, size_t end, size_t item_width, size_t nmemb);
-void slice_extract(void *dest, struct slice source, size_t pos, size_t nmemb);
-void slice_pop1(void *dest, struct slice source, size_t pos);
-
-struct slice sub_slice_abs(struct slice parent, size_t start, size_t end);
-void slice_extract_abs(void *dest, struct slice source, size_t pos, size_t nmemb);
-void slice_pop1_abs(void *dest, struct slice source, size_t pos);
+struct slice sub_slice(slice parent, size_t start, size_t len);
+void slice_extract(void *dest, slice source, size_t pos, size_t nmemb);
+void slice_get_item(void *dest, slice source, size_t pos);
