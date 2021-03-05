@@ -105,13 +105,9 @@ slice sub_slice(slice ins, size_t start, size_t len) {
     return(outs);
 }
 
-void slice_extract(void *dest, struct slice source, size_t pos, size_t nmemb) {
+void slice_extract(void *dest, struct slice source) {
     dynarray d = *source.parent;
-    memcpy(dest, d.array + ((source.start + pos) * d.item_width), nmemb * d.item_width);
-}
-
-void slice_get_item(void *dest, slice source, size_t pos) {
-    slice_extract(dest, source, pos, 1);
+    memcpy(dest, slice_get_ptr(source), source.len * d.item_width);
 }
 
 void * slice_get_ptr(slice s) {

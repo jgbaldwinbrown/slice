@@ -77,10 +77,8 @@ int main() {
     double dat3[] = {11.27, 58.36, -13.0, 25.8, 33.1};
     s = extend_slice(s, dat3, 3);
     print_slice(s, &print_double);
-    double temp_double;
-    slice_get_item(&temp_double, s, 2);
     double double_array[2];
-    slice_extract(&double_array, s, 1, 2);
+    slice_extract(&double_array, sub_slice(s, 1, 2));
     printf("%lg\t%lg\n", double_array[0], double_array[1]);
     
     struct slice sub = sub_slice(s, 1, 3);
