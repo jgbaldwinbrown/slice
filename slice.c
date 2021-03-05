@@ -45,18 +45,28 @@ slice append_slice(slice aslice, const void *item) {
 }
 
 slice extend_slice(slice s, const void *item, size_t nmemb) {
-    dynarray *d = s.parent;
-    size_t cap_needed = s.start + s.len + nmemb;
-    while (cap_needed >= d->cap) {
-        grow_dynarray(d, cap_needed * 2);
-    }
-    memcpy(slice_get_ptr(sub_slice(s, s.start + s.len, 0)), item, d->item_width * nmemb);
-    s.len += nmemb;
+    slice s_end = set_slice_arr(sub_slice(s, s.len, 0), item, nmemb);
+    s.len = s.len + s_end.len;
     return s;
 }
 
 slice concat_slices(slice dest, slice source) {
     return extend_slice(dest, slice_get_ptr(source), source.len);
+}
+
+slice set_slice_arr(slice s, const void *item, size_t nmemb) {
+    dynarray *d = s.parent;
+    size_t cap_needed = s.start + nmemb;
+    while (cap_needed >= d->cap) {
+        grow_dynarray(d, cap_needed * 2);
+    }
+    memcpy(slice_get_ptr(s), item, d->item_width * nmemb);
+    s.len += nmemb;
+    return s;
+}
+
+slice set_slice(slice dest, slice source) {
+    return set_slice_arr(dest, slice_get_ptr(source), source.len);
 }
 
 void print_slice(slice s, void (*fp) (void *)) {

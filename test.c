@@ -15,6 +15,7 @@ int main() {
     s = append_slice(s, &string[6]);
     s = append_slice(s, &string[7]);
     s = append_slice(s, &string[8]);
+    print_slice(s, &print_char);
     s = extend_slice(s, &string2[0], strlen(string2) + 1);
     char *cp = slice_get_ptr(s);
     printf("cp: %p\n", (void *) cp);
