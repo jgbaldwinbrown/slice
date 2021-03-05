@@ -9,21 +9,21 @@ slice new_slice(size_t cap, size_t item_width) {
     struct slice aslice;
     aslice.len = 0;
     aslice.start = 0;
-    aslice.parent = new_dynarray(size_t cap, size_t item_width);
+    aslice.parent = new_dynarray(cap, item_width);
     return(aslice);
 }
 
-dynarray new_dynarray(size_t cap, size_t item_width) {
-    dynarray darray;
-    darray.cap = cap;
-    darray.item_width = item_width;
-    darray.array = smalloc(len * sizeof(char) * item_width);
-    return(darray)
+dynarray *new_dynarray(size_t cap, size_t item_width) {
+    dynarray *darray = smalloc(sizeof(dynarray));
+    darray->cap = cap;
+    darray->item_width = item_width;
+    darray->array = smalloc(cap * sizeof(char) * item_width);
+    return(darray);
 }
 
-struct slice * dup_slice(slice inslice) {
+struct slice dup_slice(slice inslice) {
     slice outslice = inslice;
-    outslice->parent = new_dynarray(inslice.parent->cap, inslice.parent->item_width);
+    outslice.parent = new_dynarray(inslice.parent->cap, inslice.parent->item_width);
     dynarray inp = *inslice.parent;
     dynarray outp = *outslice.parent;
     memcpy(outp.array, inp.array, outp.cap * outp.item_width);
@@ -40,35 +40,36 @@ void grow_dynarray(dynarray d, size_t length_needed) {
     d.array = srealloc(d.array, length_needed * sizeof(char) * d.item_width);
 }
 
-slice slice_append(slice aslice, const void *item) {
-    return slice_extend(aslice, item, 1);
+slice append_slice(slice aslice, const void *item) {
+    return extend_slice(aslice, item, 1);
 }
 
-slice slice_extend(slice s, const void *item, size_t nmemb) {
-    dynarray d = *aslice.parent;
+slice extend_slice(slice s, const void *item, size_t nmemb) {
+    dynarray d = *s.parent;
     if (s.start + s.len + nmemb >= d.cap) {
-        grow_dynarray(d, (d->cap + nmemb) * 2);
+        grow_dynarray(d, (d.cap + nmemb) * 2);
     }
-    memcpy(d.array + ((s.start + s.len) * aslice->item_width), item, d.item_width * nmemb);
+    memcpy(d.array + ((s.start + s.len) * d.item_width), item, d.item_width * nmemb);
     s.len += nmemb;
-    return s
+    return s;
 }
 
 void print_slice(slice s, void (*fp) (void *)) {
     for (size_t i=s.start; i<s.start + s.len; i++) {
-        fp(s.parent->array + (i * aslice.item_width));
+        fp(s.parent->array + (i * s.parent->item_width));
     }
     printf("\n");
 }
 
 void introspect_slice(slice s, void (*fp) (void *)) {
+    dynarray d = *s.parent;
     printf("len: %ld\nstart: %ld\nparent: %p\ncap: %ld\nitem_width: %ld\narray: %p\n",
         s.len,
         s.start,
-        s.parent
+        (void *) s.parent,
         d.cap,
         d.item_width,
-        s.array
+        (void *) d.array
     );
     print_slice(s, fp);
 }
@@ -104,7 +105,10 @@ void slice_extract(void *dest, struct slice source, size_t pos, size_t nmemb) {
     memcpy(dest, d.array + ((source.start + pos) * d.item_width), nmemb * d.item_width);
 }
 
-void slice_pop1(void *dest, slice source, size_t pos) {
+void slice_get_item(void *dest, slice source, size_t pos) {
     slice_extract(dest, source, pos, 1);
 }
 
+void * slice_get_ptr(slice s, size_t pos) {
+    return s.parent->array + (pos * s.parent->item_width);
+}
