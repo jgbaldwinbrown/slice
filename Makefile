@@ -1,4 +1,4 @@
-all: test
+all: test test_float_slice
 
 CC := gcc
 CFLAGS := -Wpedantic -Wall -Werror -Wextra -O3

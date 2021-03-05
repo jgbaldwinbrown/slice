@@ -5,9 +5,11 @@
 int main() {
     double darray[ARSIZ];
     for (size_t i=0; i<ARSIZ; i++) {
-        darray[i] = i;
+        darray[i] = i + .5;
     }
-    struct slice dslice = sub_slice_array(darray, 3, 7, sizeof(double), ARSIZ);
+    
+    slice dslice = new_slice(5, sizeof(double));
+    dslice = extend_slice(dslice, darray, ARSIZ);
     print_slice(dslice, print_double);
     return(0);
 }
