@@ -50,13 +50,13 @@ slice extend_slice(slice s, const void *item, size_t nmemb) {
     while (cap_needed >= d->cap) {
         grow_dynarray(d, cap_needed * 2);
     }
-    memcpy(slice_get_ptr(s, s.start + s.len), item, d->item_width * nmemb);
+    memcpy(slice_get_ptr(sub_slice(s, s.start + s.len, 0)), item, d->item_width * nmemb);
     s.len += nmemb;
     return s;
 }
 
 slice concat_slices(slice dest, slice source) {
-    return extend_slice(dest, slice_get_ptr(source, 0), source.len);
+    return extend_slice(dest, slice_get_ptr(source), source.len);
 }
 
 void print_slice(slice s, void (*fp) (void *)) {
@@ -114,6 +114,6 @@ void slice_get_item(void *dest, slice source, size_t pos) {
     slice_extract(dest, source, pos, 1);
 }
 
-void * slice_get_ptr(slice s, size_t pos) {
-    return s.parent->array + (pos * s.parent->item_width);
+void * slice_get_ptr(slice s) {
+    return s.parent->array + (s.start * s.parent->item_width);
 }

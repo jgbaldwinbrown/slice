@@ -35,4 +35,4 @@ void print_long_long(void *d);
 struct slice sub_slice(slice parent, size_t start, size_t len);
 void slice_extract(void *dest, slice source, size_t pos, size_t nmemb);
 void slice_get_item(void *dest, slice source, size_t pos);
-void *slice_get_ptr(slice source, size_t pos);
+void *slice_get_ptr(slice source);

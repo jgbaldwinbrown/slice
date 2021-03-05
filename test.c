@@ -16,7 +16,7 @@ int main() {
     s = append_slice(s, &string[7]);
     s = append_slice(s, &string[8]);
     s = extend_slice(s, &string2[0], strlen(string2) + 1);
-    char *cp = slice_get_ptr(s, 5);
+    char *cp = slice_get_ptr(s);
     printf("cp: %p\n", (void *) cp);
     
     printf("concatenating:\n");
@@ -52,8 +52,10 @@ int main() {
     s = append_slice(s, &dat);
     print_slice(s, &print_long_long);
     introspect_slice(s, &print_long_long);
-    char *llp = slice_get_ptr(s, 5);
+    char *llp = slice_get_ptr(s);
+    char *llp2 = slice_get_ptr(sub_slice(s, 3, 0));
     printf("llp: %p\n", (void *) llp);
+    printf("llp2: %p\n", (void *) llp2);
     free_slice(s);
     
     s = new_slice(5, sizeof(double));
