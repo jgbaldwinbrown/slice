@@ -60,18 +60,11 @@ my_slice = extend_slice(my_slice, &b[0], 3)
 
 ### Extracting elements from a slice
 
-Extract a single element with the `slice_pop1` function:
-
-```c
-double a;
-slice_get_item(a, my_slice, 2)
-```
-
-Extract multiple contiguous elements to an array with  the `slice_extract` function:
+Extract all elements from a slice to an array with  the `slice_extract` function:
 
 ```c
 double a[5];
-slice_extract(&a, my_slice, 1, 5)
+slice_extract(&a, my_slice)
 ```
 
 ### Sub-slices
@@ -81,6 +74,13 @@ freed. All slices that index the same dynamic array may alter it, but one of the
 
 ```c
 slice my_sub_slice = sub_slice(my_slice, 1, 3) {
+```
+
+In order to extract just a portion of a slice to an array, use a sub-slice:
+
+```c
+double a[5];
+slice_extract(&a, sub_slice(my_slice, 3, 5));
 ```
 
 ### Printing a slice
@@ -104,6 +104,13 @@ use the following invocation:
 ```c
 introspect_slice(myslice, print_double);
 ```
+
+### Concatenating slices
+
+To append the contents of a source slice to a destination slice, use `concat_slices()`:
+
+```c
+dest_slice = concat_slices(dest_slice, source_slice);
 
 ### A full example
 
