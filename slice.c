@@ -35,9 +35,9 @@ void free_slice(slice aslice) {
     free(aslice.parent);
 }
 
-void grow_dynarray(dynarray d, size_t length_needed) {
-    d.cap = length_needed;
-    d.array = srealloc(d.array, length_needed * sizeof(char) * d.item_width);
+void grow_dynarray(dynarray *d, size_t length_needed) {
+    d->cap = length_needed;
+    d->array = srealloc(d->array, length_needed * sizeof(char) * d->item_width);
 }
 
 slice append_slice(slice aslice, const void *item) {
@@ -45,13 +45,18 @@ slice append_slice(slice aslice, const void *item) {
 }
 
 slice extend_slice(slice s, const void *item, size_t nmemb) {
-    dynarray d = *s.parent;
-    if (s.start + s.len + nmemb >= d.cap) {
-        grow_dynarray(d, (d.cap + nmemb) * 2);
+    dynarray *d = s.parent;
+    size_t cap_needed = s.start + s.len + nmemb;
+    while (cap_needed >= d->cap) {
+        grow_dynarray(d, cap_needed * 2);
     }
-    memcpy(d.array + ((s.start + s.len) * d.item_width), item, d.item_width * nmemb);
+    memcpy(slice_get_ptr(s, s.start + s.len), item, d->item_width * nmemb);
     s.len += nmemb;
     return s;
+}
+
+slice concat_slices(slice dest, slice source) {
+    return extend_slice(dest, slice_get_ptr(source, 0), source.len);
 }
 
 void print_slice(slice s, void (*fp) (void *)) {

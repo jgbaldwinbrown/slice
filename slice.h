@@ -21,9 +21,10 @@ dynarray *new_dynarray(size_t cap, size_t item_width);
 void free_slice(slice aslice);
 slice dup_slice(slice inslice);
 
-void grow_dynarray(dynarray darray, size_t length_needed);
+void grow_dynarray(dynarray *darray, size_t length_needed);
 slice append_slice(slice aslice, const void *item);
 slice extend_slice(slice aslice, const void *item, size_t nmemb);
+slice concat_slices(slice dest, slice source);
 
 void print_slice(slice aslice, void (*fp) (void *));
 void introspect_slice(slice aslice, void (*fp) (void *));

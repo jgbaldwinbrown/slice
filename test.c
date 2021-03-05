@@ -2,7 +2,7 @@
 
 int main() {
     slice s = new_slice(3, sizeof(char));
-    char *string = "hello";
+    char *string = "1234567890";
     char *string2 = "This is a very long string. I'm writing it "
         "to be super long to make sure that my array resizing works correctly "
         "after updating it to check the size of the appended item.";
@@ -11,13 +11,33 @@ int main() {
     s = append_slice(s, &string[2]);
     s = append_slice(s, &string[3]);
     s = append_slice(s, &string[4]);
-    print_slice(s, &print_char);
-    s = extend_slice(s, string2, strlen(string2) + 1);
-    print_slice(s, &print_char);
-    introspect_slice(s, &print_char);
+    s = append_slice(s, &string[5]);
+    s = append_slice(s, &string[6]);
+    s = append_slice(s, &string[7]);
+    s = append_slice(s, &string[8]);
+    s = extend_slice(s, &string2[0], strlen(string2) + 1);
     char *cp = slice_get_ptr(s, 5);
     printf("cp: %p\n", (void *) cp);
+    
+    printf("concatenating:\n");
+    slice s2 = new_slice(1, sizeof(char));
+
+    s2 = extend_slice(s2, "potato", strlen("potato") + 1);
+
+    printf("before:\n");
+    printf("s:\n");
+    introspect_slice(s, &print_char);
+    printf("s2:\n");
+    introspect_slice(s2, &print_char);
+
+    s2 = concat_slices(s2, s);
+    printf("\nafter:\n");
+    printf("s:\n");
+    introspect_slice(s, &print_char);
+    printf("s2:\n");
+    introspect_slice(s2, &print_char);
     free_slice(s);
+    free_slice(s2);
     
     s = new_slice(5, sizeof(long long));
     long long dat = 5;
