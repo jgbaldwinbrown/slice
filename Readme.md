@@ -33,11 +33,12 @@ data in the array, the length of the array, and the width of items in the
 array. A new slice can be initialized as follows:
 
 ```c
-slice my_slice = new_slice(len, item_width)
+slice my_slice = new_slice(len, base, item_width)
 ```
 
 This generates a new slice with the start and end positions set to 0, and a
-buffer capacity of `len`. The item width refers to the number of bytes used by
+buffer capacity of `len`. The base refers to the amount of left padding in the
+buffer for left appending. The item width refers to the number of bytes used by
 the array member, and is stored so that the slice can correctly index items in
 the array. Note that any slice created with `new_slice()` must be freed with
 `free_slice()` to free the underlying dynamic array object.
