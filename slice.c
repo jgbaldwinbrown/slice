@@ -75,6 +75,10 @@ slice concat_slices(slice dest, slice source) {
 
 slice set_slice_arr(slice s, const void *item, ssize_t nmemb) {
     dynarray *d = s.parent;
+    ssize_t shift_needed = -(d->base + s.start);
+    if (shift_needed > 0) {
+        shift_dynarray(d, shift_needed);
+    }
     ssize_t cap_needed = d->base + s.start + nmemb;
     while (cap_needed >= d->cap) {
         grow_dynarray(d, cap_needed * 2);

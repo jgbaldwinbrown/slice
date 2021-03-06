@@ -20,7 +20,12 @@ int main() {
     set_slice_arr(sub_slice(b, 7, 2), (long long[]) {100, 1000}, 2);
     print_slice(b, print_long_long);
     introspect_slice(b, print_long_long);
+    set_slice_arr(sub_slice(b, -10, 2), (long long[]) {15, 16}, 2);
+    introspect_slice(b, print_long_long);
+    introspect_slice(sub_slice(b, -10, 20), print_long_long);
+    /*
     shift_dynarray(b.parent, 100);
     introspect_slice(b, print_long_long);
+    */
     return 0;
 }
