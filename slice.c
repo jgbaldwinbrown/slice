@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "slice.h"
 
-slice new_slice(size_t cap, size_t item_width) {
+slice new_slice(ssize_t cap, ssize_t item_width) {
     struct slice aslice;
     aslice.len = 0;
     aslice.start = 0;
@@ -13,7 +13,7 @@ slice new_slice(size_t cap, size_t item_width) {
     return(aslice);
 }
 
-dynarray *new_dynarray(size_t cap, size_t item_width) {
+dynarray *new_dynarray(ssize_t cap, ssize_t item_width) {
     dynarray *darray = smalloc(sizeof(dynarray));
     darray->cap = cap;
     darray->item_width = item_width;
@@ -21,7 +21,7 @@ dynarray *new_dynarray(size_t cap, size_t item_width) {
     return(darray);
 }
 
-slice new_slice_from_arr(void *arr, size_t cap, size_t item_width) {
+slice new_slice_from_arr(void *arr, ssize_t cap, ssize_t item_width) {
     slice s = new_slice(cap, item_width);
     s = set_slice_arr(s, arr, cap);
     return s;
@@ -41,7 +41,7 @@ void free_slice(slice aslice) {
     free(aslice.parent);
 }
 
-void grow_dynarray(dynarray *d, size_t length_needed) {
+void grow_dynarray(dynarray *d, ssize_t length_needed) {
     d->cap = length_needed;
     d->array = srealloc(d->array, length_needed * sizeof(char) * d->item_width);
 }
@@ -50,7 +50,7 @@ slice append_slice(slice aslice, const void *item) {
     return extend_slice(aslice, item, 1);
 }
 
-slice extend_slice(slice s, const void *item, size_t nmemb) {
+slice extend_slice(slice s, const void *item, ssize_t nmemb) {
     slice s_end = set_slice_arr(sub_slice(s, s.len, 0), item, nmemb);
     s.len = s.len + s_end.len;
     return s;
@@ -60,9 +60,9 @@ slice concat_slices(slice dest, slice source) {
     return extend_slice(dest, slice_get_ptr(source), source.len);
 }
 
-slice set_slice_arr(slice s, const void *item, size_t nmemb) {
+slice set_slice_arr(slice s, const void *item, ssize_t nmemb) {
     dynarray *d = s.parent;
-    size_t cap_needed = s.start + nmemb;
+    ssize_t cap_needed = s.start + nmemb;
     while (cap_needed >= d->cap) {
         grow_dynarray(d, cap_needed * 2);
     }
@@ -76,7 +76,7 @@ slice set_slice(slice dest, slice source) {
 }
 
 void print_slice(slice s, void (*fp) (void *)) {
-    for (size_t i=s.start; i<s.start + s.len; i++) {
+    for (ssize_t i=s.start; i<s.start + s.len; i++) {
         fp(s.parent->array + (i * s.parent->item_width));
     }
     printf("\n");
@@ -114,7 +114,7 @@ void print_long_long(void *d) {
 }
 
 
-slice sub_slice(slice ins, size_t start, size_t len) {
+slice sub_slice(slice ins, ssize_t start, ssize_t len) {
     slice outs = ins;
     outs.start = start + outs.start;
     outs.len = len;
