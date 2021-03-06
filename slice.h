@@ -24,6 +24,7 @@ void free_slice(slice aslice);
 slice dup_slice(slice inslice);
 
 void grow_dynarray(dynarray *darray, ssize_t length_needed);
+void shift_dynarray(dynarray *darray, ssize_t shift_dist);
 slice append_slice(slice aslice, const void *item);
 slice extend_slice(slice s, const void *item, ssize_t nmemb);
 slice set_slice_arr(slice s, const void *item, ssize_t nmemb);

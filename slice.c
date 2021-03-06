@@ -47,6 +47,18 @@ void grow_dynarray(dynarray *d, ssize_t length_needed) {
     d->array = srealloc(d->array, length_needed * sizeof(char) * d->item_width);
 }
 
+void shift_dynarray(dynarray *d, ssize_t shift_dist) {
+    ssize_t old_cap = d->cap;
+    ssize_t cap_needed = d->cap + shift_dist;
+    while (cap_needed >= d->cap) {
+        grow_dynarray(d, cap_needed * 2);
+    }
+    for (ssize_t i=old_cap; i>=0; i--) {
+        memcpy(d->array + ((i + shift_dist) * d->item_width), d->array + (i * d->item_width), d->item_width);
+    };
+    d->base = d->base + shift_dist;
+}
+
 slice append_slice(slice aslice, const void *item) {
     return extend_slice(aslice, item, 1);
 }
