@@ -22,7 +22,13 @@ int main() {
     introspect_slice(b, print_long_long);
     set_slice_arr(sub_slice(b, -10, 2), (long long[]) {15, 16}, 2);
     introspect_slice(b, print_long_long);
-    introspect_slice(sub_slice(b, -10, 20), print_long_long);
+    slice big = sub_slice(b, -10, 20);
+    introspect_slice(big, print_long_long);
+    long long to_add = 18;
+    big = lappend_slice(big, &to_add);
+    introspect_slice(big, print_long_long);
+    big = lextend_slice(big, (long long[]){19, 20, 21}, 3);
+    introspect_slice(big, print_long_long);
     /*
     shift_dynarray(b.parent, 100);
     introspect_slice(b, print_long_long);

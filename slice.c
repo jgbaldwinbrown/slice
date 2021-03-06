@@ -63,9 +63,20 @@ slice append_slice(slice aslice, const void *item) {
     return extend_slice(aslice, item, 1);
 }
 
+slice lappend_slice(slice aslice, const void *item) {
+    return lextend_slice(aslice, item, 1);
+}
+
 slice extend_slice(slice s, const void *item, ssize_t nmemb) {
     slice s_end = set_slice_arr(sub_slice(s, s.len, 0), item, nmemb);
     s.len = s.len + s_end.len;
+    return s;
+}
+
+slice lextend_slice(slice s, const void *item, ssize_t nmemb) {
+    slice s_new = set_slice_arr(sub_slice(s, -nmemb, 0), item, nmemb);
+    s.len = s.len + s_new.len;
+    s.start = s.start - nmemb;
     return s;
 }
 
