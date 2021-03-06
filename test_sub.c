@@ -29,6 +29,9 @@ int main() {
     introspect_slice(big, print_long_long);
     big = lextend_slice(big, (long long[]){19, 20, 21}, 3);
     introspect_slice(big, print_long_long);
+    slice sub_to_set = sub_slice(big, 5, 2);
+    sub_to_set = set_slice(sub_to_set, sub_slice(big, 8, 2));
+    introspect_slice(big, print_long_long);
     /*
     shift_dynarray(b.parent, 100);
     introspect_slice(b, print_long_long);

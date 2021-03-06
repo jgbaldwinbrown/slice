@@ -58,6 +58,8 @@ double b[] = {3.5, 7,8, 9.3}
 my_slice = extend_slice(my_slice, &b[0], 3)
 ```
 
+Alternatively, append or extend to the left end of a slice using 'lappend' and 'lextend'
+
 ### Extracting elements from a slice
 
 Extract all elements from a slice to an array with  the `slice_extract` function:
@@ -81,6 +83,21 @@ In order to extract just a portion of a slice to an array, use a sub-slice:
 ```c
 double a[5];
 slice_extract(&a, sub_slice(my_slice, 3, 5));
+```
+
+### Setting elements of a slice
+
+To set the elements of a slice using values from an array, use `set_slice_arr()`:
+
+```c
+double a[] = {1.3, 2.4, 3.5};
+my_slice = set_slice_arr(my_slice, a, 3);
+```
+
+Or, to set the values of a slice using another slice, use `set_slice()`:
+
+```c
+dest_slice = set_slice(dest_slice, source_slice);
 ```
 
 ### Printing a slice
