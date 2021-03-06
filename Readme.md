@@ -111,6 +111,7 @@ To append the contents of a source slice to a destination slice, use `concat_sli
 
 ```c
 dest_slice = concat_slices(dest_slice, source_slice);
+```
 
 ### A full example
 
