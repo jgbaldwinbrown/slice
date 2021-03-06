@@ -8,7 +8,7 @@ int main() {
         darray[i] = i + .5;
     }
     
-    slice dslice = new_slice(5, sizeof(double));
+    slice dslice = new_slice(5, 0, sizeof(double));
     dslice = extend_slice(dslice, darray, ARSIZ);
     print_slice(dslice, print_double);
     return(0);

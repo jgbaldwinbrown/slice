@@ -1,7 +1,7 @@
 #include "slice.h"
 
 int main() {
-    slice s = new_slice(3, sizeof(char));
+    slice s = new_slice(3, 0, sizeof(char));
     char *string = "1234567890";
     char *string2 = "This is a very long string. I'm writing it "
         "to be super long to make sure that my array resizing works correctly "
@@ -21,7 +21,7 @@ int main() {
     printf("cp: %p\n", (void *) cp);
     
     printf("concatenating:\n");
-    slice s2 = new_slice(1, sizeof(char));
+    slice s2 = new_slice(1, 0, sizeof(char));
 
     s2 = extend_slice(s2, "potato", strlen("potato") + 1);
 
@@ -40,7 +40,7 @@ int main() {
     free_slice(s);
     free_slice(s2);
     
-    s = new_slice(5, sizeof(long long));
+    s = new_slice(5, 0, sizeof(long long));
     long long dat = 5;
     s = append_slice(s, &dat);
     dat++;
@@ -59,7 +59,7 @@ int main() {
     printf("llp2: %p\n", (void *) llp2);
     free_slice(s);
     
-    s = new_slice(5, sizeof(double));
+    s = new_slice(5, 0, sizeof(double));
     double dat2 = 11.1;
     s = append_slice(s, &dat2);
     dat2++;
@@ -74,7 +74,7 @@ int main() {
     introspect_slice(s, &print_double);
     free_slice(s);
     
-    s = new_slice(5, sizeof(double));
+    s = new_slice(5, 0, sizeof(double));
     double dat3[] = {11.27, 58.36, -13.0, 25.8, 33.1};
     s = extend_slice(s, dat3, 3);
     print_slice(s, &print_double);
