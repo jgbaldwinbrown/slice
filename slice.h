@@ -17,6 +17,7 @@ typedef struct slice {
 } slice;
 
 slice new_slice(size_t cap, size_t item_width);
+slice new_slice_from_arr(void *arr, size_t cap, size_t item_width);
 dynarray *new_dynarray(size_t cap, size_t item_width);
 void free_slice(slice aslice);
 slice dup_slice(slice inslice);

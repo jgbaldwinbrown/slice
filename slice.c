@@ -21,7 +21,13 @@ dynarray *new_dynarray(size_t cap, size_t item_width) {
     return(darray);
 }
 
-struct slice dup_slice(slice inslice) {
+slice new_slice_from_arr(void *arr, size_t cap, size_t item_width) {
+    slice s = new_slice(cap, item_width);
+    s = set_slice_arr(s, arr, cap);
+    return s;
+}
+
+slice dup_slice(slice inslice) {
     slice outslice = inslice;
     outslice.parent = new_dynarray(inslice.parent->cap, inslice.parent->item_width);
     dynarray inp = *inslice.parent;
