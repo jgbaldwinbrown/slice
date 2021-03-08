@@ -8,5 +8,6 @@ int main() {
         buf = append_slice(buf, &c);
     }
     print_slice(buf, print_char);
+    free_slice(buf);
     return(0);
 }
