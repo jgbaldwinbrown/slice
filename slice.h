@@ -49,4 +49,27 @@ void slice_extract(void *dest, slice source);
 slice slice_extract_slice(slice source);
 void *slice_get_ptr(slice source);
 
+#define NEW_SLICE_TYPE_HEADER( MY_TYPE, MY_NAME ) \
+\
+slice MY_NAME ## _append_slice(slice aslice, MY_TYPE to_add);\
+slice MY_NAME ## _lappend_slice(slice aslice, MY_TYPE to_add);\
+MY_TYPE slice_extract_ ## MY_NAME(slice source);
+
+#define NEW_SLICE_TYPE( MY_TYPE, MY_NAME ) \
+\
+slice MY_NAME ## _append_slice(slice aslice, MY_TYPE item) {\
+    return extend_slice(aslice, &item, 1);\
+}\
+\
+slice MY_NAME ## _lappend_slice(slice aslice, MY_TYPE item) {\
+    return lextend_slice(aslice, &item, 1);\
+}\
+\
+MY_TYPE slice_extract_## MY_NAME(struct slice source) {\
+    MY_TYPE buf;\
+    dynarray d = *source.parent;\
+    memcpy(&buf, slice_get_ptr(source), source.len * d.item_width);\
+    return buf;\
+}
+
 #endif
