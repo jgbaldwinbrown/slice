@@ -26,7 +26,9 @@ slice dup_slice(slice inslice);
 void grow_dynarray(dynarray *darray, ssize_t length_needed);
 void shift_dynarray(dynarray *darray, ssize_t shift_dist);
 slice append_slice(slice aslice, const void *item);
+slice slice_append_slice(slice aslice, slice to_add);
 slice lappend_slice(slice aslice, const void *item);
+slice slice_lappend_slice(slice aslice, slice to_add);
 slice extend_slice(slice s, const void *item, ssize_t nmemb);
 slice lextend_slice(slice s, const void *item, ssize_t nmemb);
 slice set_slice_arr(slice s, const void *item, ssize_t nmemb);
@@ -41,4 +43,5 @@ void print_long_long(void *d);
 
 struct slice sub_slice(slice parent, ssize_t start, ssize_t len);
 void slice_extract(void *dest, slice source);
+slice slice_extract_slice(slice source);
 void *slice_get_ptr(slice source);

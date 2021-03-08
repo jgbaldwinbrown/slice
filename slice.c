@@ -63,8 +63,16 @@ slice append_slice(slice aslice, const void *item) {
     return extend_slice(aslice, item, 1);
 }
 
+slice slice_append_slice(slice aslice, slice item) {
+    return extend_slice(aslice, &item, 1);
+}
+
 slice lappend_slice(slice aslice, const void *item) {
     return lextend_slice(aslice, item, 1);
+}
+
+slice slice_lappend_slice(slice aslice, slice item) {
+    return lextend_slice(aslice, &item, 1);
 }
 
 slice extend_slice(slice s, const void *item, ssize_t nmemb) {
@@ -153,6 +161,13 @@ slice sub_slice(slice ins, ssize_t start, ssize_t len) {
 void slice_extract(void *dest, struct slice source) {
     dynarray d = *source.parent;
     memcpy(dest, slice_get_ptr(source), source.len * d.item_width);
+}
+
+slice slice_extract_slice(struct slice source) {
+    slice buf;
+    dynarray d = *source.parent;
+    memcpy(&buf, slice_get_ptr(source), source.len * d.item_width);
+    return buf;
 }
 
 void * slice_get_ptr(slice s) {
