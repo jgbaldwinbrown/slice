@@ -4,6 +4,9 @@
 #include "smalloc.h"
 #include <stdbool.h>
 
+#ifndef SLICE_H
+#define SLICE_H
+
 typedef struct dynarray {
     ssize_t cap;
     ssize_t base;
@@ -45,3 +48,5 @@ struct slice sub_slice(slice parent, ssize_t start, ssize_t len);
 void slice_extract(void *dest, slice source);
 slice slice_extract_slice(slice source);
 void *slice_get_ptr(slice source);
+
+#endif
