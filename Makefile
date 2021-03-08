@@ -1,4 +1,4 @@
-all: test test_float_slice test_sub test_from_arr cat rev tac
+all: test test_float_slice test_sub test_from_arr cat rev tac tac_value
 
 CC := gcc
 CFLAGS := -Wpedantic -Wall -Werror -Wextra -O3
@@ -49,4 +49,10 @@ tac.o: tac.c slice.h
 	$(CC) $(CFLAGS) -c $<
 
 tac: tac.o slice.o smalloc.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+tac_value.o: tac_value.c slice.h
+	$(CC) $(CFLAGS) -c $<
+
+tac_value: tac_value.o slice.o smalloc.o
 	$(CC) $(CFLAGS) $^ -o $@
