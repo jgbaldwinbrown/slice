@@ -80,3 +80,9 @@ test_int_slice.o: test_int_slice.c slice.h
 
 test_int_slice: test_int_slice.o slice.o smalloc.o int_slice.o
 	$(CC) $(CFLAGS) $^ -o $@
+
+test_float_slice.o: test_float_slice.c slice.h
+	$(CC) $(CFLAGS) -c $<
+
+test_float_slice: test_float_slice.o slice.o smalloc.o
+	$(CC) $(CFLAGS) $^ -o $@

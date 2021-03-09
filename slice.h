@@ -50,51 +50,116 @@ slice slice_extract_slice(slice source);
 void *slice_get_ptr(slice source);
 
 #define NEW_SLICE_TYPE_HEADER( MY_TYPE, MY_NAME ) \
+typedef struct MY_NAME ## _slice {\
+    ssize_t start;\
+    ssize_t len;\
+    dynarray *parent;\
+} MY_NAME ## _slice;\
 \
-slice MY_NAME ## _append_slice(slice aslice, MY_TYPE to_add);\
-slice MY_NAME ## _lappend_slice(slice aslice, MY_TYPE to_add);\
-MY_TYPE slice_extract_ ## MY_NAME(slice source);\
-slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base);\
-slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base);\
-slice MY_NAME ## _extend_slice(slice s, const MY_TYPE *item, ssize_t nmemb);\
-slice MY_NAME ## _lextend_slice(slice s, const MY_TYPE *item, ssize_t nmemb);\
-slice MY_NAME ## _set_slice_arr(slice s, const MY_TYPE *item, ssize_t nmemb);
+MY_NAME ## _slice MY_NAME ## _append_slice(MY_NAME ## _slice aslice, MY_TYPE to_add);\
+MY_NAME ## _slice MY_NAME ## _lappend_slice(MY_NAME ## _slice aslice, MY_TYPE to_add);\
+MY_TYPE slice_extract_ ## MY_NAME(MY_NAME ## _slice source);\
+MY_NAME ## _slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base);\
+MY_NAME ## _slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base);\
+MY_NAME ## _slice MY_NAME ## _extend_slice(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb);\
+MY_NAME ## _slice MY_NAME ## _lextend_slice(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb);\
+MY_NAME ## _slice MY_NAME ## _set_slice_arr(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb);\
+\
+void MY_NAME ## _free_slice(MY_NAME ## _slice aslice);\
+MY_NAME ## _slice MY_NAME ## _dup_slice(MY_NAME ## _slice inslice);\
+MY_NAME ## _slice MY_NAME ## _set_slice(MY_NAME ## _slice dest, MY_NAME ## _slice source);\
+MY_NAME ## _slice MY_NAME ## _concat_slices(MY_NAME ## _slice dest, MY_NAME ## _slice source);\
+void MY_NAME ## _print_slice(MY_NAME ## _slice aslice, void (*fp) (void *));\
+void MY_NAME ## _introspect_slice(MY_NAME ## _slice aslice, void (*fp) (void *));\
+struct MY_NAME ## _slice MY_NAME ## _sub_slice(MY_NAME ## _slice parent, ssize_t start, ssize_t len);\
+MY_TYPE * MY_NAME ## _slice_get_ptr(MY_NAME ## _slice source);\
+MY_NAME ## _slice MY_NAME ## _slice_gen2type(slice s);\
+slice MY_NAME ## _slice_type2gen(MY_NAME ## _slice t);
 
 #define NEW_SLICE_TYPE( MY_TYPE, MY_NAME ) \
 \
-slice MY_NAME ## _append_slice(slice aslice, MY_TYPE item) {\
-    return extend_slice(aslice, &item, 1);\
+MY_NAME ## _slice MY_NAME ## _slice_gen2type(slice s) {\
+    MY_NAME ## _slice t;\
+    t.len = s.len;\
+    t.parent = s.parent;\
+    t.start = s.start;\
+    return t;\
 }\
 \
-slice MY_NAME ## _lappend_slice(slice aslice, MY_TYPE item) {\
-    return lextend_slice(aslice, &item, 1);\
+slice MY_NAME ## _slice_type2gen(MY_NAME ## _slice t) {\
+    slice s;\
+    s.len = t.len;\
+    s.parent = t.parent;\
+    s.start = t.start;\
+    return s;\
 }\
 \
-MY_TYPE slice_extract_## MY_NAME(struct slice source) {\
+MY_NAME ## _slice MY_NAME ## _append_slice(MY_NAME ## _slice aslice, MY_TYPE item) {\
+    return MY_NAME ## _slice_gen2type(append_slice(MY_NAME ## _slice_type2gen(aslice), &item));\
+}\
+\
+MY_NAME ## _slice MY_NAME ## _lappend_slice(MY_NAME ## _slice aslice, MY_TYPE item) {\
+    return MY_NAME ## _slice_gen2type(lextend_slice(MY_NAME ## _slice_type2gen(aslice), &item, 1));\
+}\
+\
+MY_TYPE slice_extract_## MY_NAME(struct MY_NAME ## _slice source) {\
     MY_TYPE buf;\
     dynarray d = *source.parent;\
-    memcpy(&buf, slice_get_ptr(source), source.len * d.item_width);\
+    memcpy(&buf, slice_get_ptr(MY_NAME ## _slice_type2gen(source)), source.len * d.item_width);\
     return buf;\
 }\
 \
-slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base) {\
-    return new_slice(cap, base, sizeof(MY_TYPE));\
+MY_NAME ## _slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base) {\
+    return MY_NAME ## _slice_gen2type(new_slice(cap, base, sizeof(MY_TYPE)));\
 }\
 \
-slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base) {\
-    return new_slice_from_arr(arr, cap, base, sizeof(MY_TYPE));\
+MY_NAME ## _slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base) {\
+    return MY_NAME ## _slice_gen2type(new_slice_from_arr(arr, cap, base, sizeof(MY_TYPE)));\
 }\
 \
-slice MY_NAME ## _extend_slice(slice s, const MY_TYPE *item, ssize_t nmemb) {\
-    return extend_slice(s, item, nmemb);\
+MY_NAME ## _slice MY_NAME ## _extend_slice(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return MY_NAME ## _slice_gen2type(extend_slice(MY_NAME ## _slice_type2gen(s), item, nmemb));\
 }\
 \
-slice MY_NAME ## _lextend_slice(slice s, const MY_TYPE *item, ssize_t nmemb) {\
-    return lextend_slice(s, item, nmemb);\
+MY_NAME ## _slice MY_NAME ## _lextend_slice(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return MY_NAME ## _slice_gen2type(lextend_slice(MY_NAME ## _slice_type2gen(s), item, nmemb));\
 }\
 \
-slice MY_NAME ## _set_slice_arr(slice s, const MY_TYPE *item, ssize_t nmemb) {\
-    return set_slice_arr(s, item, nmemb);\
+MY_NAME ## _slice MY_NAME ## _set_slice_arr(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return MY_NAME ## _slice_gen2type(set_slice_arr(MY_NAME ## _slice_type2gen(s), item, nmemb));\
+}\
+\
+\
+void MY_NAME ## _free_slice(MY_NAME ## _slice aslice) {\
+    free_slice(MY_NAME ## _slice_type2gen(aslice));\
+}\
+\
+MY_NAME ## _slice MY_NAME ## _dup_slice(MY_NAME ## _slice inslice) {\
+    return MY_NAME ## _slice_gen2type(dup_slice(MY_NAME ## _slice_type2gen(inslice)));\
+}\
+\
+MY_NAME ## _slice MY_NAME ## _set_slice(MY_NAME ## _slice dest, MY_NAME ## _slice source) {\
+    return MY_NAME ## _slice_gen2type(set_slice(MY_NAME ## _slice_type2gen(dest), MY_NAME ## _slice_type2gen(source)));\
+}\
+\
+MY_NAME ## _slice MY_NAME ## _concat_slices(MY_NAME ## _slice dest, MY_NAME ## _slice source) {\
+    return MY_NAME ## _slice_gen2type(concat_slices(MY_NAME ## _slice_type2gen(dest), MY_NAME ## _slice_type2gen(source)));\
+}\
+\
+void MY_NAME ## _print_slice(MY_NAME ## _slice aslice, void (*fp) (void *)) {\
+    print_slice(MY_NAME ## _slice_type2gen(aslice), fp);\
+}\
+\
+void MY_NAME ## _introspect_slice(MY_NAME ## _slice aslice, void (*fp) (void *)) {\
+    introspect_slice(MY_NAME ## _slice_type2gen(aslice), fp);\
+}\
+\
+struct MY_NAME ## _slice MY_NAME ## _sub_slice(MY_NAME ## _slice parent, ssize_t start, ssize_t len) {\
+    return MY_NAME ## _slice_gen2type(sub_slice(MY_NAME ## _slice_type2gen(parent), start, len));\
+}\
+\
+MY_TYPE * MY_NAME ## _slice_get_ptr(MY_NAME ## _slice source) {\
+    return (MY_TYPE *) slice_get_ptr(MY_NAME ## _slice_type2gen(source));\
 }
 
 #endif

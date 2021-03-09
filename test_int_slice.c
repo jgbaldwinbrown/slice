@@ -8,10 +8,13 @@ void print_int(void *d) {
 }
 
 int main() {
-    slice buf = int_new_slice(5, 0);
+    int_slice buf = int_new_slice(5, 0);
     buf = int_append_slice(buf, 123);
     buf = int_extend_slice(buf, (int[]) {456, 789}, 2);
-    print_slice(buf, print_int);
-    free_slice(buf);
+    int_print_slice(buf, print_int);
+    int *i;
+    i = int_slice_get_ptr(buf);
+    printf("%d\n", *i);
+    int_free_slice(buf);
     return(0);
 }
