@@ -53,7 +53,12 @@ void *slice_get_ptr(slice source);
 \
 slice MY_NAME ## _append_slice(slice aslice, MY_TYPE to_add);\
 slice MY_NAME ## _lappend_slice(slice aslice, MY_TYPE to_add);\
-MY_TYPE slice_extract_ ## MY_NAME(slice source);
+MY_TYPE slice_extract_ ## MY_NAME(slice source);\
+slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base);\
+slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base);\
+slice MY_NAME ## _extend_slice(slice s, const MY_TYPE *item, ssize_t nmemb);\
+slice MY_NAME ## _lextend_slice(slice s, const MY_TYPE *item, ssize_t nmemb);\
+slice MY_NAME ## _set_slice_arr(slice s, const MY_TYPE *item, ssize_t nmemb);
 
 #define NEW_SLICE_TYPE( MY_TYPE, MY_NAME ) \
 \
@@ -70,6 +75,26 @@ MY_TYPE slice_extract_## MY_NAME(struct slice source) {\
     dynarray d = *source.parent;\
     memcpy(&buf, slice_get_ptr(source), source.len * d.item_width);\
     return buf;\
+}\
+\
+slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base) {\
+    return new_slice(cap, base, sizeof(MY_TYPE));\
+}\
+\
+slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base) {\
+    return new_slice_from_arr(arr, cap, base, sizeof(MY_TYPE));\
+}\
+\
+slice MY_NAME ## _extend_slice(slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return extend_slice(s, item, nmemb);\
+}\
+\
+slice MY_NAME ## _lextend_slice(slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return lextend_slice(s, item, nmemb);\
+}\
+\
+slice MY_NAME ## _set_slice_arr(slice s, const MY_TYPE *item, ssize_t nmemb) {\
+    return set_slice_arr(s, item, nmemb);\
 }
 
 #endif
