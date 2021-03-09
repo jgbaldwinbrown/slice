@@ -141,18 +141,16 @@ To make an array of `double`s, the following code is acceptable:
 int main() {
     double d[] = {1.5, 3.7, 3.8, 9.9, 10.10};
     double d2[10];
-    double dp = &d[0];
-    double dp2 = &d2[0];
-    slice my_slice = new_slice(3, sizeof(double));
+    slice my_slice = new_slice(3, 0, sizeof(double));
     
-    my_slice = slice_extend(my_slice, dp, 5);
+    my_slice = slice_extend(my_slice, d, 5);
     slice my_subslice = sub_slice(my_slice, 1, 3);
     
     print_slice(my_slice, print_double);
     print_slice(my_subslice, print_double);
     
-    extract_slice(dp, my_subslice, 1, 1);
-    printf("%lg\n", dp2);
+    extract_slice(d, my_subslice, 1, 1);
+    printf("%lg\n", d2);
     
     free_slice(my_slice);
 }
@@ -164,4 +162,41 @@ This should produce the following output:
 	1.5	3.7	3.8	9.9	10.10
 	3.7	3.8	9.9
 3.8
+```
+
+### Creating new slice types
+
+`slice.h` includes a macro for generating new slice types that hold a specified
+type. This is the recommended method of using this library. The macro
+`NEW_SLICE_TYPE_HEADER()` creates all function declarations and the new slice
+type, while `NEW_SLICE_TYPE()` defines all of the new functions. Each of these
+macros takes two arguments. The first argument is the type that the new slice
+type will hold, and the second is the name to append to all functions
+associated with this type. These are provided as separate macros so that new
+slices can be included as header files (see `int_slice.h` and `int_slice.c` for
+an example). An example of a complete program that creates a new slice type for
+holding doubles, then uses the new type:
+
+```c
+#include "slice.h"
+
+NEW_SLICE_TYPE_HEADER(double, double)
+NEW_SLICE_TYPE(double, double)
+
+int main() {
+    double d[] = {1.5, 3.7, 3.8, 9.9, 10.10};
+    double d2[1];
+    double_slice my_slice = double_new_slice(3, 0);
+    
+    my_slice = double_slice_extend(my_slice, d, 5);
+    double_slice my_subslice = double_sub_slice(my_slice, 1, 3);
+    
+    double_print_slice(my_slice, print_double);
+    double_print_slice(my_subslice, print_double);
+    
+    extract_double_slice(d2, my_subslice, 1, 1);
+    printf("%lg\n", d2);
+    
+    free_slice(my_slice);
+}
 ```
