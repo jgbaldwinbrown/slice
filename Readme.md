@@ -149,7 +149,7 @@ int main() {
     print_slice(my_slice, print_double);
     print_slice(my_subslice, print_double);
     
-    extract_slice(d, my_subslice, 1, 1);
+    slice_extract(d, my_subslice, 1, 1);
     printf("%lg\n", d2);
     
     free_slice(my_slice);
@@ -194,7 +194,7 @@ int main() {
     double_print_slice(my_slice, print_double);
     double_print_slice(my_subslice, print_double);
     
-    extract_double_slice(d2, my_subslice, 1, 1);
+    slice_extract_double(d2, my_subslice, 1, 1);
     printf("%lg\n", d2);
     
     free_slice(my_slice);
