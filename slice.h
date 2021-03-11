@@ -59,6 +59,7 @@ typedef struct MY_NAME ## _slice {\
 MY_NAME ## _slice MY_NAME ## _append_slice(MY_NAME ## _slice aslice, MY_TYPE to_add);\
 MY_NAME ## _slice MY_NAME ## _lappend_slice(MY_NAME ## _slice aslice, MY_TYPE to_add);\
 MY_TYPE slice_extract_ ## MY_NAME(MY_NAME ## _slice source);\
+MY_TYPE slice_extract_one_ ## MY_NAME(MY_NAME ## _slice source);\
 MY_NAME ## _slice MY_NAME ## _new_slice(ssize_t cap, ssize_t base);\
 MY_NAME ## _slice MY_NAME ## _new_slice_from_arr(MY_TYPE *arr, ssize_t cap, ssize_t base);\
 MY_NAME ## _slice MY_NAME ## _extend_slice(MY_NAME ## _slice s, const MY_TYPE *item, ssize_t nmemb);\
@@ -105,7 +106,7 @@ MY_NAME ## _slice MY_NAME ## _lappend_slice(MY_NAME ## _slice aslice, MY_TYPE it
 MY_TYPE slice_extract_## MY_NAME(struct MY_NAME ## _slice source) {\
     MY_TYPE buf;\
     dynarray d = *source.parent;\
-    memcpy(&buf, slice_get_ptr(MY_NAME ## _slice_type2gen(source)), source.len * d.item_width);\
+    memcpy(&buf, slice_get_ptr(MY_NAME ## _slice_type2gen(source)), d.item_width);\
     return buf;\
 }\
 \
