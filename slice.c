@@ -193,3 +193,33 @@ slice split_slice(slice to_split, slice separators) {
     }
     return out;
 }
+
+slice tokenize_slice(slice to_split, slice separators) {
+    slice out = new_slice(0, 0, sizeof(slice));
+    ssize_t start = 0;
+    bool started_token = true;
+    bool sep_match = false;
+    for (ssize_t pos=0; pos < to_split.len; pos++) {
+        for (ssize_t sep_index=0; sep_index < separators.len; sep_index++) {
+            if (!memcmp(
+                slice_get_ptr(sub_slice(to_split, pos, 1)),
+                slice_get_ptr(sub_slice(separators, sep_index, 1)),
+                to_split.parent->item_width
+            )) {
+                sep_match = true;
+                if (started_token) {
+                    slice to_append = sub_slice(to_split, start, pos-start);
+                    out = append_slice(out, &to_append);
+                }
+                started_token = false;
+                break;
+            }
+            if (sep_index == separators.len-1) {sep_match = false;}
+        }
+        if ((!started_token) && !sep_match) {
+            start = pos;
+            started_token = true;
+        };
+    }
+    return out;
+}
