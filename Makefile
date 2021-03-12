@@ -1,4 +1,4 @@
-all: test test_float_slice test_sub test_from_arr cat rev tac tac_value test_long_long_slice test_int_slice test_short tac_typed
+all: test test_float_slice test_sub test_from_arr cat rev tac tac_value test_long_long_slice test_int_slice test_short tac_typed test_split
 
 CC := gcc
 CFLAGS := -Wpedantic -Wall -Werror -Wextra -O3
@@ -85,4 +85,10 @@ test_int_slice.o: test_int_slice.c slice.h
 	$(CC) $(CFLAGS) -c $<
 
 test_int_slice: test_int_slice.o slice.o smalloc.o int_slice.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+test_split.o: test_split.c slice.h
+	$(CC) $(CFLAGS) -c $<
+
+test_split: test_split.o slice.o smalloc.o
 	$(CC) $(CFLAGS) $^ -o $@

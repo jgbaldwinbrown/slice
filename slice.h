@@ -37,6 +37,7 @@ slice lextend_slice(slice s, const void *item, ssize_t nmemb);
 slice set_slice_arr(slice s, const void *item, ssize_t nmemb);
 slice set_slice(slice dest, slice source);
 slice concat_slices(slice dest, slice source);
+slice split_slice(slice to_split, slice separators);
 
 void print_slice(slice aslice, void (*fp) (void *));
 void introspect_slice(slice aslice, void (*fp) (void *));

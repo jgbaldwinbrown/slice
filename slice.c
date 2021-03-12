@@ -173,3 +173,23 @@ slice slice_extract_slice(struct slice source) {
 void * slice_get_ptr(slice s) {
     return s.parent->array + ((s.parent->base + s.start) * s.parent->item_width);
 }
+
+slice split_slice(slice to_split, slice separators) {
+    slice out = new_slice(0, 0, sizeof(slice));
+    ssize_t start = 0;
+    for (ssize_t pos=0; pos < to_split.len; pos++) {
+        for (ssize_t sep_index=0; sep_index < separators.len; sep_index++) {
+            if (!memcmp(
+                slice_get_ptr(sub_slice(to_split, pos, 1)),
+                slice_get_ptr(sub_slice(separators, sep_index, 1)),
+                to_split.parent->item_width
+            )) {
+                slice to_append = sub_slice(to_split, start, pos-start);
+                out = append_slice(out, &to_append);
+                start = pos+1;
+                break;
+            }
+        }
+    }
+    return out;
+}
