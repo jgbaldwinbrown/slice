@@ -20,5 +20,7 @@ int main() {
     
     free_slice(in);
     free_slice(sep);
+    free_slice(split);
+    free_slice(tok);
     return 0;
 }
