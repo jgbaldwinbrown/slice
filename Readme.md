@@ -167,15 +167,16 @@ This should produce the following output:
 ### Creating new slice types
 
 `slice.h` includes a macro for generating new slice types that hold a specified
-type. This is the recommended method of using this library. The macro
-`NEW_SLICE_TYPE_HEADER()` creates all function declarations and the new slice
-type, while `NEW_SLICE_TYPE()` defines all of the new functions. Each of these
-macros takes two arguments. The first argument is the type that the new slice
-type will hold, and the second is the name to append to all functions
-associated with this type. These are provided as separate macros so that new
-slices can be included as header files (see `int_slice.h` and `int_slice.c` for
-an example). An example of a complete program that creates a new slice type for
-holding doubles, then uses the new type:
+type. This is the recommended method of using this library, though it is less
+thoroughly tested right now. The macro `NEW_SLICE_TYPE_HEADER()` creates all
+function declarations and the new slice type, while `NEW_SLICE_TYPE()` defines
+all of the new functions. Each of these macros takes two arguments. The first
+argument is the type that the new slice type will hold, and the second is the
+name to append to all functions associated with this type. These are provided
+as separate macros so that new slices can be included as header files (see
+`int_slice.h` and `int_slice.c` for an example). An example of a complete
+program that creates a new slice type for holding doubles, then uses the new
+type:
 
 ```c
 #include "slice.h"
