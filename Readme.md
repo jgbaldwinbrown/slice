@@ -143,14 +143,14 @@ int main() {
     double d2[10];
     slice my_slice = new_slice(3, 0, sizeof(double));
     
-    my_slice = slice_extend(my_slice, d, 5);
+    my_slice = extend_slice(my_slice, d, 5);
     slice my_subslice = sub_slice(my_slice, 1, 3);
     
     print_slice(my_slice, print_double);
     print_slice(my_subslice, print_double);
     
-    slice_extract(d, my_subslice, 1, 1);
-    printf("%lg\n", d2);
+    slice_extract(d2, my_subslice);
+    printf("%lg\n", d2[0]);
     
     free_slice(my_slice);
 }
@@ -185,18 +185,18 @@ NEW_SLICE_TYPE(double, double)
 
 int main() {
     double d[] = {1.5, 3.7, 3.8, 9.9, 10.10};
-    double d2[1];
+    double d2;
     double_slice my_slice = double_new_slice(3, 0);
     
-    my_slice = double_slice_extend(my_slice, d, 5);
+    my_slice = double_extend_slice(my_slice, d, 5);
     double_slice my_subslice = double_sub_slice(my_slice, 1, 3);
     
     double_print_slice(my_slice, print_double);
     double_print_slice(my_subslice, print_double);
     
-    slice_extract_double(d2, my_subslice, 1, 1);
+    d2 = slice_extract_double(my_subslice);
     printf("%lg\n", d2);
     
-    free_slice(my_slice);
+    double_free_slice(my_slice);
 }
 ```
